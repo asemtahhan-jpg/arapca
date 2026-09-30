@@ -1,1 +1,652 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>قصص عربية تفاعلية للمبتدئين – ترجمة تركية</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  body{font-family:'Cairo',sans-serif;}
+  .story-text{font-family:'Amiri',serif;}
+  .word{cursor:pointer;border-radius:.45rem;padding:0 .14rem;transition:background-color .15s,color .15s;}
+  .word:hover{background:#fcd34d;color:#78350f;}
+  .word.selected{background:#f59e0b;color:#fff;box-shadow:0 2px 6px rgba(245,158,11,.4);}
+  .story-line{transition:background-color .2s,border-color .2s;}
+  .fade-in{animation:fadeIn .18s ease-out;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+  .playing{background:#fef3c7 !important;border-color:#fbbf24 !important;}
+  .tab-btn.active{background:#f59e0b;color:#fff;box-shadow:0 4px 12px rgba(245,158,11,.35);}
+  .tab-btn{white-space:nowrap;}
+  .hide-scroll::-webkit-scrollbar{display:none;}
+  .hide-scroll{-ms-overflow-style:none;scrollbar-width:none;}
+</style>
+</head>
+<body class="bg-gradient-to-br from-amber-50 via-orange-50 to-sky-50 min-h-screen text-gray-800 flex flex-col">
 
+<!-- ======= الهيدر ======= -->
+<header class="bg-white/80 backdrop-blur-md shadow-sm py-4 px-4 sticky top-0 z-20 border-b border-amber-100">
+  <div class="max-w-4xl mx-auto flex flex-wrap justify-between items-center gap-2">
+    <h1 class="text-lg sm:text-2xl font-bold text-amber-800 flex items-center gap-2">
+      <span>📖</span> قصص عربية تفاعلية للمبتدئين
+    </h1>
+    <span class="text-[11px] sm:text-sm bg-amber-100 text-amber-800 px-3 py-1 rounded-full font-medium">
+      اضغط الكلمة ← معناها بالتركية | اضغط الجملة ← ترجمتها
+    </span>
+  </div>
+</header>
+
+<!-- ======= اختيار القصة ======= -->
+<div class="bg-white/70 border-b border-amber-100 sticky top-[64px] sm:top-[72px] z-10 backdrop-blur-md">
+  <div class="max-w-4xl mx-auto px-3 py-3 overflow-x-auto hide-scroll">
+    <div id="tabs" class="flex gap-2 items-center"></div>
+  </div>
+</div>
+
+<!-- ======= المحتوى ======= -->
+<main class="max-w-4xl w-full mx-auto p-4 sm:p-6 my-4">
+
+  <div class="bg-white rounded-2xl shadow-xl p-5 sm:p-9 border border-amber-100 relative overflow-hidden">
+
+    <div id="story-badge" class="absolute top-0 right-0 bg-amber-500 text-white text-xs px-4 py-1.5 rounded-bl-xl font-bold shadow-sm"></div>
+
+    <!-- شرح سريع -->
+    <div class="mt-6 mb-5 grid grid-cols-1 sm:grid-cols-3 gap-2 text-[12px]">
+      <div class="bg-amber-50 border border-amber-100 rounded-xl px-3 py-2 text-amber-800">
+        <b>👆 كلمة واحدة</b> → معناها بالتركية + نطقها بحروف تركية
+      </div>
+      <div class="bg-sky-50 border border-sky-100 rounded-xl px-3 py-2 text-sky-800">
+        <b>📄 الجملة</b> → ترجمتها التركية كاملة + نطقها
+      </div>
+      <div class="bg-emerald-50 border border-emerald-100 rounded-xl px-3 py-2 text-emerald-800">
+        <b>🔊 السماعة</b> → اسمع النطق العربي
+      </div>
+    </div>
+
+    <div id="story-container" class="space-y-3"></div>
+
+    <!-- أزرار التحكم -->
+    <div class="mt-9 pt-6 border-t border-gray-100 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <button id="read-all-btn" class="bg-amber-600 hover:bg-amber-700 text-white px-5 py-2.5 rounded-xl font-semibold shadow-md transition transform active:scale-95 flex items-center gap-2 text-sm sm:text-base">
+          <span>🔊</span> قراءة القصة كاملة
+        </button>
+        <button id="stop-btn" class="bg-rose-100 hover:bg-rose-200 text-rose-700 px-4 py-2.5 rounded-xl font-semibold transition text-sm sm:text-base">
+          إيقاف النطق
+        </button>
+      </div>
+
+      <div class="flex items-center gap-2 text-sm text-gray-500">
+        <label for="speed-select">سرعة الصوت:</label>
+        <select id="speed-select" class="bg-gray-50 border border-gray-200 rounded-lg px-2 py-1 outline-none focus:ring-2 focus:ring-amber-500">
+          <option value="0.7">بطيء جداً</option>
+          <option value="0.9" selected>عادي (موصى به)</option>
+          <option value="1.1">سريع</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="text-center mt-6 text-xs text-gray-500">
+    خمس قصص قصيرة مختارة بعناية للمتعلم الجديد • كلمات مشتركة بين العربية والتركية
+  </div>
+</main>
+
+<footer class="bg-white/60 border-t border-amber-100 py-3 text-center text-xs text-gray-500">
+  مصمم خصيصاً للتعلم والتفاعل الصوتي السهل والممتع
+</footer>
+
+<!-- ======= نافذة الكلمة ======= -->
+<div id="modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+  <div class="fade-in bg-white w-full max-w-md rounded-3xl shadow-2xl p-6 relative">
+    <button id="modal-close" class="absolute top-3 left-3 w-9 h-9 rounded-full bg-gray-100 hover:bg-rose-100 text-gray-500 hover:text-rose-600 font-bold transition">✕</button>
+
+    <div class="text-center mb-5 pt-3">
+      <div id="modal-word" class="story-text text-4xl sm:text-5xl text-amber-800 leading-snug"></div>
+      <div id="modal-pron" class="mt-3 text-xl font-extrabold text-sky-700" dir="ltr"></div>
+      <div class="text-[11px] text-gray-400 mt-1">🔤 النطق بالحروف التركية</div>
+    </div>
+
+    <div class="rounded-2xl bg-amber-50 border border-amber-100 p-4 text-center">
+      <div class="text-[11px] font-bold text-amber-600 mb-1">🇹🇷 المعنى بالتركية</div>
+      <div id="modal-tr" class="text-2xl font-extrabold text-gray-800" dir="ltr"></div>
+    </div>
+
+    <button id="modal-speak" class="mt-4 w-full bg-amber-600 hover:bg-amber-700 text-white py-2.5 rounded-xl font-bold transition active:scale-95">
+      🔊 اسمع الكلمة بالعربية
+    </button>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   1) أدوات مساعدة
+   ========================================================= */
+const DIACRITICS = /[\u064B-\u0652\u0670\u0640]/g;
+
+function normalize(w){
+  return (w || '')
+    .replace(DIACRITICS, '')
+    .replace(/[أإآٱ]/g, 'ا')
+    .replace(/ى/g, 'ي')
+    .replace(/ئ/g, 'ي')
+    .replace(/ؤ/g, 'و')
+    .replace(/ء/g, '')
+    .replace(/ة/g, 'ه')
+    .replace(/[^\u0621-\u064A]/g, '');
+}
+function cleanWord(w){
+  return (w || '').replace(/[^\u0621-\u064A\u064B-\u0652]/g, '');
+}
+
+/* =========================================================
+   2) القاموس العام (كلمة ← [تركي, نطق تركي])
+   ========================================================= */
+const rawDict = {
+  /* ===== قصة 1: المدرسة ===== */
+  "هذا":["bu","hâzâ"], "أحمد":["Ahmet","Ahmed"], "طالب":["öğrenci / talebe","tâlib"],
+  "جديد":["yeni","cedîd"], "في":["içinde, -de/-da","fî"], "المدرسة":["okul","el-medrese"],
+  "الصباح":["sabah","es-sabâh"], "قال":["dedi","kâle"], "لأمه":["annesine","li-ummihi"],
+  "صباح":["sabah","sabâh"], "الخير":["hayır, iyilik","el-hayr"], "يا":["ey","yâ"],
+  "أمي":["annem","ummî"], "قالت":["dedi (dişil)","kâlet"], "أمه":["annesi","ummuhu"],
+  "النور":["nur, ışık","en-nûr"], "خذ":["al","huz"], "حقيبتك":["çantanı","hakîbeteke"],
+  "وكتابك":["ve kitabını","ve kitâbeke"], "ودفترك":["ve defterini","ve deftereke"],
+  "وقلمك":["ve kalemini","ve kalemeke"], "ذهب":["gitti","zehebe"], "إلى":["-e / -a","ilâ"],
+  "رأى":["gördü","raâ"], "المدرس":["öğretmen","el-müderris"], "وقال":["ve dedi","ve kâle"],
+  "السلام":["selam, barış","es-selâm"], "عليكم":["üzerinize","aleyküm"],
+  "وعليكم":["ve üzerinize","ve aleyküm"], "مرحبا":["merhaba","merhaben"], "بك":["sana","bike"],
+  "هذه":["bu (dişil)","hâzihi"], "بيتك":["evin","beytüke"], "الثاني":["ikinci","es-sânî"],
+  "الفصل":["sınıf","el-fasl"], "جلس":["oturdu","celesc"], "على":["üzerine","alâ"],
+  "الكرسي":["sandalye","el-kürsî"], "أمام":["önüne","amâme"], "الطاولة":["masa","et-tâvile"],
+  "وفتح":["ve açtı","ve feteha"], "كتابه":["kitabını","kitâbehu"], "وساعته":["ve saatini","ve sâatehu"],
+  "له":["ona","lehü"], "أحسنت":["aferin","ahsente"], "الدرس":["ders","ed-ders"],
+  "سهل":["kolay","sehl"], "وجميل":["ve güzel","ve cemîl"], "عاد":["döndü","âde"],
+  "البيت":["ev","el-beyt"], "المساء":["akşam","el-mesâ"], "شكرا":["teşekkürler","şükran"],
+  "أنا":["ben","ene"], "سعيد":["mutlu","saîd"], "اليوم":["bugün","el-yevm"],
+
+  /* ===== قصة 2: السوق ===== */
+  "يوم":["gün","yevm"], "الجمعة":["cuma","el-cumua"], "ذهبت":["gitti (dişil)","zehebet"],
+  "فاطمة":["Fatıma","Fâtımetü"], "مع":["ile","mea"], "أمها":["annesi","ummihâ"],
+  "السوق":["pazar, çarşı","es-sûk"], "رأت":["gördü (dişil)","raet"],
+  "فاكهة":["meyve","fâkihe"], "كثيرة":["çok","kesîre"], "تفاحا":["elma","tüffâhan"],
+  "وبرتقالا":["ve portakal","ve burtukâlen"], "وليمونا":["ve limon","ve leymûnen"],
+  "وعنبا":["ve üzüm","ve ineben"], "البقالة":["bakkal (kadın)","el-bakkâle"],
+  "أهلا":["hoş","ehlen"], "وسهلا":["ve kolay","ve sehlen"], "عندي":["bende","indî"],
+  "خبز":["ekmek","hubz"], "طازج":["taze","tâzec"], "وجبن":["ve peynir","ve cübn"],
+  "وزيتون":["ve zeytin","ve zeytûn"], "نعم":["evet","naam"], "من":["-den/-dan","min"],
+  "فضلك":["lütfen, rican","fadlike"], "كيلو":["kilo","kîlû"], "الباب":["kapı","el-bâb"],
+  "صديقتها":["arkadaşını","sadîkatehâ"], "مريم":["Meryem","Meryem"], "لها":["ona","lehâ"],
+  "كيف":["nasıl","keyfe"], "حالك":["halin","hâlüki"], "بخير":["iyiyim","bi-hayr"],
+  "هل":["mı/mi","hel"], "تذهبين":["gidiyor musun","tezhebîne"],
+  "المكتبة":["kütüphane","el-mektebe"], "غدا":["yarın","gaden"],
+  "سأذهب":["gideceğim","se-ezheb"], "لأقرأ":["okumak için","li-akrae"],
+  "كتابا":["kitap","kitâben"], "عن":["hakkında","ani"], "التاريخ":["tarih","et-târîh"],
+  "رجعت":["döndü","raceat"], "فرحة":["mutlu","ferihe"], "رحلة":["yolculuk","rihle"],
+  "جميلة":["güzel","cemîle"],
+
+  /* ===== قصة 3: العائلة ===== */
+  "اسمي":["adım","ismî"], "سليم":["Selim","Selîm"], "عائلتي":["ailem","âiletî"],
+  "صغيرة":["küçük","sagîre"], "وجميلة":["ve güzel","ve cemîle"], "أبي":["babam","ebî"],
+  "طبيب":["doktor","tabîb"], "المستشفى":["hastane","el-müstaşfâ"], "أمي":["annem","ümmî"],
+  "مدرسة":["öğretmen (kadın)","müderrise"], "لي":["benim","lî"], "أخ":["kardeş","ah"],
+  "اسمه":["adı","ismühü"], "كريم":["Kerim","Kerîm"], "وأخت":["ve kız kardeş","ve uht"],
+  "اسمها":["adı","ismühâ"], "نور":["Nur","Nûr"], "بيتنا":["evimiz","beytünâ"],
+  "كبير":["büyük","kebîr"], "فيه":["içinde","fîhi"], "غرفة":["oda","gurfe"],
+  "ومطبخ":["ve mutfak","ve matbah"], "وحمام":["ve banyo","ve hammâm"],
+  "نوم":["uyku","nevm"], "الصالة":["salon","es-sâle"], "طاولة":["masa","tâvile"],
+  "وكرسي":["ve sandalye","ve kürsî"], "وتلفاز":["ve televizyon","ve tilfâz"],
+  "ومصباح":["ve lamba","ve misbâh"], "نأكل":["yeriz","ne'kül"], "معا":["birlikte","meân"],
+  "خبزا":["ekmek","hubzen"], "وجبنا":["ve peynir","ve cübnen"],
+  "وزيتونا":["ve zeytin","ve zeytûnen"], "وشايا":["ve çay","ve şâyen"],
+  "نجلس":["otururuz","neclis"], "ونتكلم":["ve konuşuruz","ve netekellem"],
+  "ونضحك":["ve güleriz","ve nadhak"], "أحب":["severim","ühibb"],
+  "كثيرا":["çok","kesîren"], "الحمد":["hamd","el-hamd"], "لله":["Allah'a","lillâh"],
+  "كل":["her","külle"], "شيء":["şey","şey"],
+
+  /* ===== قصة 4: المطعم ===== */
+  "دخل":["girdi","dehale"], "عمر":["Ömer","Ömer"], "المطعم":["restoran","el-mat'am"],
+  "وجلس":["ve oturdu","ve celesc"], "جاء":["geldi","câe"], "الخادم":["garson","el-hâdim"],
+  "ماذا":["ne","mâzâ"], "تريد":["istersin","türîd"], "تأكل":["yemek","te'küle"],
+  "أريد":["istiyorum","ürîd"], "سمكا":["balık","semeken"], "وأرزا":["ve pirinç","ve erüzen"],
+  "وسلطة":["ve salata","ve salateten"], "وكوب":["ve bardak","ve kûbe"],
+  "ماء":["su","mâin"], "بارد":["soğuk","bârid"], "بعد":["sonra","bade"],
+  "قليل":["az","kalîl"], "الطعام":["yemek","et-taâm"], "ساخنا":["sıcak","sâhinen"],
+  "ولذيذا":["ve lezzetli","ve lezîzen"], "أكل":["yedi","ekele"],
+  "وشرب":["ve içti","ve şeribe"], "ثم":["sonra","sümme"], "ممتاز":["mükemmel","mümtâz"],
+  "جزيلا":["bol","cezîlen"], "عفوا":["rica ederim","afven"], "واجبنا":["görevimiz","vâcibünâ"],
+  "تفضل":["buyur","tefaddal"], "بالحساب":["hesap","bi'l-hisâb"], "دفع":["ödedi","defaa"],
+  "الحساب":["hesabı","el-hisâb"], "اللقاء":["buluşma","el-likâ"],
+  "نظيف":["temiz","nazîf"],
+
+  /* ===== قصة 5: صديقي من تركيا ===== */
+  "مدرستي":["okulum","medresetî"], "مراد":["Murat","Murâd"],
+  "يتكلم":["konuşur","yetekellem"], "العربية":["Arapça","el-arabiyye"],
+  "قليلا":["az","kalîlen"], "أتكلم":["konuşurum","etekellem"],
+  "التركية":["Türkçe","et-türkiyye"], "قلت":["dedim","kultü"],
+  "حالك":["halin","hâlüke"], "بلد":["ülke","beled"], "أعطيته":["ona verdim","a'taytühü"],
+  "دفترا":["defter","defteren"], "وقلما":["ve kalem","ve kalemen"],
+  "عربيا":["Arapça","arabiyyen"], "صغيرا":["küçük","sagîren"],
+  "أنت":["sen","ente"], "صديق":["arkadaş","sadîk"],
+  "حقيقي":["gerçek","hakîkiyy"], "نتعلم":["öğreniriz","neteallem"],
+  "الصداقة":["dostluk","es-sadâka"], "كنز":["hazine","kenz"],
+  "غال":["değerli","gâlin"], "اللغة":["dil","el-luga"],
+  "جسر":["köprü","cisr"], "بين":["arasında","beyne"], "الشعوب":["halklar","eş-şuûb"]
+};
+
+/* بناء القاموس بمفاتيح موحّدة */
+const dict = {};
+for (const k in rawDict){
+  const nk = normalize(k);
+  if (!dict[nk]) dict[nk] = { tr: rawDict[k][0], pron: rawDict[k][1] };
+}
+
+/* =========================================================
+   3) القصص الخمس
+   ========================================================= */
+const stories = [
+  /* ---------- 1. المدرسة ---------- */
+  {
+    id:'school',
+    badge:'الْيَوْمُ الْأَوَّلُ فِي الْمَدْرَسَةِ',
+    lines:[
+      { ar:"١. الْيَوْمُ الْأَوَّلُ فِي الْمَدْرَسَةِ", tts:"اليوم الأول في المدرسة", isTitle:true,
+        tr:"1. Okuldaki İlk Gün",
+        pron:"El-yevmü'l-evvelü fi'l-medrese" },
+      { ar:"هَذَا أَحْمَدُ. أَحْمَدُ طَالِبٌ جَدِيدٌ فِي الْمَدْرَسَةِ.",
+        tr:"Bu Ahmet. Ahmet okulda yeni bir öğrencidir.",
+        pron:"Hâzâ Ahmed. Ahmed tâlibün cedîdün fi'l-medrese." },
+      { ar:"فِي الصَّبَاحِ، قَالَ لِأُمِّهِ: \"صَبَاحُ الْخَيْرِ يَا أُمِّي!\"",
+        tr:"Sabahleyin annesine dedi: \"Günaydın anneciğim!\"",
+        pron:"Fi's-sabâh, kâle li-ummihi: \"Sabâhu'l-hayr yâ ummî!\"" },
+      { ar:"قَالَتْ أُمُّهُ: \"صَبَاحُ النُّورِ يَا أَحْمَد! خُذْ حَقِيبَتَكَ وَكِتَابَكَ وَدَفْتَرَكَ وَقَلَمَكَ.\"",
+        tr:"Annesi dedi: \"Aydınlık sabahlar Ahmet! Çantanı, kitabını, defterini ve kalemini al.\"",
+        pron:"Kâlet ummuhu: \"Sabâhu'n-nûr yâ Ahmed! Huz hakîbeteke ve kitâbeke ve deftereke ve kalemeke.\"" },
+      { ar:"ذَهَبَ أَحْمَدُ إِلَى الْمَدْرَسَةِ. رَأَى الْمُدَرِّسَ وَقَالَ: \"السَّلَامُ عَلَيْكُمْ!\"",
+        tr:"Ahmet okula gitti. Öğretmeni gördü ve dedi: \"Selamün aleyküm!\"",
+        pron:"Zehebe Ahmedü ilâ'l-medrese. Raâ'l-müderrise ve kâle: \"Es-selâmü aleyküm!\"" },
+      { ar:"قَالَ الْمُدَرِّسُ: \"وَعَلَيْكُمُ السَّلَام! مَرْحَبًا بِكَ يَا أَحْمَد. هَذِهِ الْمَدْرَسَةُ بَيْتُكَ الثَّانِي.\"",
+        tr:"Öğretmen dedi: \"Ve aleykümselam! Hoş geldin Ahmet. Bu okul senin ikinci evindir.\"",
+        pron:"Kâle'l-müderris: \"Ve aleykümü's-selâm! Merhaben bike yâ Ahmed. Hâzihi'l-medresetü beytüke's-sânî.\"" },
+      { ar:"فِي الْفَصْلِ، جَلَسَ أَحْمَدُ عَلَى الْكُرْسِيِّ أَمَامَ الطَّاوِلَةِ، وَفَتَحَ كِتَابَهُ وَسَاعَتَهُ.",
+        tr:"Sınıfta Ahmet sandalyeye, masanın önüne oturdu; kitabını ve saatini açtı.",
+        pron:"Fi'l-fasl, celesc Ahmedü ale'l-kürsiyyi amâme't-tâvileti, ve feteha kitâbehu ve sâatehu." },
+      { ar:"قَالَ لَهُ الْمُدَرِّسُ: \"أَحْسَنْتَ يَا أَحْمَد! الدَّرْسُ سَهْلٌ وَجَمِيلٌ.\"",
+        tr:"Öğretmen ona dedi: \"Aferin Ahmet! Ders kolay ve güzeldir.\"",
+        pron:"Kâle lehü'l-müderris: \"Ahsente yâ Ahmed! Ed-dersü sehlün ve cemîl.\"" },
+      { ar:"عَادَ أَحْمَدُ إِلَى الْبَيْتِ فِي الْمَسَاءِ، وَقَالَ لِأُمِّهِ: \"شُكْرًا يَا أُمِّي، أَنَا سَعِيدٌ الْيَوْمَ!\"",
+        tr:"Ahmet akşam eve döndü ve annesine dedi: \"Teşekkürler anneciğim, bugün mutluyum!\"",
+        pron:"Âde Ahmedü ilâ'l-beyti fi'l-mesâ', ve kâle li-ummihi: \"Şükran yâ ummî, ene saîdün el-yevm!\"" }
+    ]
+  },
+
+  /* ---------- 2. السوق ---------- */
+  {
+    id:'market',
+    badge:'رِحْلَةٌ إِلَى السُّوقِ',
+    lines:[
+      { ar:"٢. رِحْلَةٌ إِلَى السُّوقِ", tts:"رحلة إلى السوق", isTitle:true,
+        tr:"2. Pazara Bir Yolculuk",
+        pron:"Rihletün ilâ's-sûk" },
+      { ar:"فِي يَوْمِ الْجُمُعَةِ، ذَهَبَتْ فَاطِمَةُ مَعَ أُمِّهَا إِلَى السُّوقِ.",
+        tr:"Cuma günü Fatıma annesiyle pazara gitti.",
+        pron:"Fî yevmi'l-cumua, zehebet Fâtımetü mea ummihâ ilâ's-sûk." },
+      { ar:"فِي السُّوقِ رَأَتْ فَاكِهَةً كَثِيرَةً: تُفَّاحًا وَبُرْتُقَالًا وَلَيْمُونًا وَعِنَبًا.",
+        tr:"Pazarda birçok meyve gördü: elma, portakal, limon ve üzüm.",
+        pron:"Fi's-sûk raet fâkiheten kesîreten: tüffâhan ve burtukâlen ve leymûnen ve ineben." },
+      { ar:"قَالَتِ الْبَقَّالَةُ: \"أَهْلًا وَسَهْلًا! عِنْدِي خُبْزٌ طَازَجٌ وَجُبْنٌ وَزَيْتُونٌ.\"",
+        tr:"Bakkal kadın dedi: \"Hoş geldiniz! Taze ekmek, peynir ve zeytinim var.\"",
+        pron:"Kâleti'l-bakkâle: \"Ehlen ve sehlen! Indî hubzün tâzecün ve cübnün ve zeytûn.\"" },
+      { ar:"قَالَتِ الْأُمُّ: \"نَعَمْ، مِنْ فَضْلِكَ كِيلُو مِنَ التُّفَّاحِ وَكِيلُو مِنَ الْبُرْتُقَالِ.\"",
+        tr:"Anne dedi: \"Evet, lütfen bir kilo elma ve bir kilo portakal.\"",
+        pron:"Kâleti'l-ümm: \"Naam, min fadlike kîlû mine't-tüffâh ve kîlû mine'l-burtukâl.\"" },
+      { ar:"عِنْدَ الْبَابِ، رَأَتْ فَاطِمَةُ صَدِيقَتَهَا مَرْيَمَ، وَقَالَتْ لَهَا: \"كَيْفَ حَالُكِ؟\"",
+        tr:"Kapının yanında Fatıma arkadaşı Meryem'i gördü ve ona dedi: \"Nasılsın?\"",
+        pron:"Inde'l-bâb, raet Fâtımetü sadîkatehâ Meryem, ve kâlet lehâ: \"Keyfe hâlüki?\"" },
+      { ar:"قَالَتْ مَرْيَمُ: \"أَنَا بِخَيْرٍ، شُكْرًا! هَلْ تَذْهَبِينَ إِلَى الْمَكْتَبَةِ غَدًا؟\"",
+        tr:"Meryem dedi: \"Ben iyiyim, teşekkürler! Yarın kütüphaneye gidiyor musun?\"",
+        pron:"Kâlet Meryem: \"Ene bi-hayrin, şükran! Hel tezhebîne ilâ'l-mektebeti gaden?\"" },
+      { ar:"قَالَتْ فَاطِمَةُ: \"نَعَمْ، سَأَذْهَبُ لِأَقْرَأَ كِتَابًا جَمِيلًا عَنِ التَّارِيخِ.\"",
+        tr:"Fatıma dedi: \"Evet, tarih hakkında güzel bir kitap okumaya gideceğim.\"",
+        pron:"Kâlet Fâtımetü: \"Naam, se-ezhebu li-akrae kitâben cemîlen ani't-târîh.\"" },
+      { ar:"رَجَعَتْ فَاطِمَةُ إِلَى الْبَيْتِ فَرِحَةً، وَقَالَتْ: \"يَا لَهَا مِنْ رِحْلَةٍ جَمِيلَةٍ!\"",
+        tr:"Fatıma eve mutlu bir şekilde döndü ve dedi: \"Ne güzel bir yolculuk!\"",
+        pron:"Raceat Fâtımetü ilâ'l-beyti feriheten, ve kâlet: \"Yâ lehâ min rihletin cemîle!\"" }
+    ]
+  },
+
+  /* ---------- 3. العائلة ---------- */
+  {
+    id:'family',
+    badge:'عَائِلَتِي الْجَمِيلَةُ',
+    lines:[
+      { ar:"٣. عَائِلَتِي الْجَمِيلَةُ", tts:"عائلتي الجميلة", isTitle:true,
+        tr:"3. Güzel Ailem",
+        pron:"Âiletî'l-cemîle" },
+      { ar:"أَنَا اسْمِي سَلِيمٌ. عَائِلَتِي صَغِيرَةٌ وَجَمِيلَةٌ.",
+        tr:"Benim adım Selim. Ailem küçük ve güzel.",
+        pron:"Ene ismî Selîm. Âiletî sagîretün ve cemîle." },
+      { ar:"أَبِي طَبِيبٌ فِي الْمُسْتَشْفَى، وَأُمِّي مُدَرِّسَةٌ فِي الْمَدْرَسَةِ.",
+        tr:"Babam hastanede doktor, annem okulda öğretmen.",
+        pron:"Ebî tabîbün fi'l-müstaşfâ, ve ümmî müderrisetün fi'l-medrese." },
+      { ar:"لِي أَخٌ اسْمُهُ كَرِيمٌ، وَأُخْتٌ اسْمُهَا نُورٌ.",
+        tr:"Kerim adında bir kardeşim ve Nur adında bir kız kardeşim var.",
+        pron:"Lî ahün ismühü Kerîm, ve uhtün ismühâ Nûr." },
+      { ar:"بَيْتُنَا كَبِيرٌ، فِيهِ غُرْفَةٌ وَمَطْبَخٌ وَحَمَّامٌ وَغُرْفَةُ نَوْمٍ.",
+        tr:"Evimiz büyük; içinde bir oda, mutfak, banyo ve yatak odası var.",
+        pron:"Beytünâ kebîr, fîhi gurfetün ve matbahün ve hammâmün ve gurfetü nevm." },
+      { ar:"فِي الصَّالَةِ طَاوِلَةٌ وَكُرْسِيٌّ وَتِلْفَازٌ وَمِصْبَاحٌ.",
+        tr:"Salonda bir masa, sandalye, televizyon ve lamba var.",
+        pron:"Fi's-sâle tâviletün ve kürsiyyün ve tilfâzün ve misbâh." },
+      { ar:"نَأْكُلُ مَعًا فِي الْمَطْبَخِ: خُبْزًا وَجُبْنًا وَزَيْتُونًا وَشَايًا.",
+        tr:"Mutfakta birlikte yeriz: ekmek, peynir, zeytin ve çay.",
+        pron:"Ne'külü meân fi'l-matbah: hubzen ve cübnen ve zeytûnen ve şâyen." },
+      { ar:"فِي الْمَسَاءِ، نَجْلِسُ فِي الصَّالَةِ وَنَتَكَلَّمُ وَنَضْحَكُ مَعًا.",
+        tr:"Akşamleyin salonda oturur, konuşur ve birlikte güleriz.",
+        pron:"Fi'l-mesâ', neclisü fi's-sâle ve netekellemü ve nadhakü meân." },
+      { ar:"أُحِبُّ عَائِلَتِي كَثِيرًا! الْحَمْدُ لِلَّهِ عَلَى كُلِّ شَيْءٍ.",
+        tr:"Ailemi çok seviyorum! Her şey için Allah'a hamdolsun.",
+        pron:"Ühibbü âiletî kesîren! El-hamdü lillâhi alâ külli şey'." }
+    ]
+  },
+
+  /* ---------- 4. المطعم ---------- */
+  {
+    id:'restaurant',
+    badge:'فِي الْمَطْعَمِ',
+    lines:[
+      { ar:"٤. فِي الْمَطْعَمِ", tts:"في المطعم", isTitle:true,
+        tr:"4. Restoranda",
+        pron:"Fi'l-mat'am" },
+      { ar:"دَخَلَ عُمَرُ الْمَطْعَمَ وَجَلَسَ عَلَى الْكُرْسِيِّ.",
+        tr:"Ömer restorana girdi ve sandalyeye oturdu.",
+        pron:"Dehale Ömerü'l-mat'ame ve celesc ale'l-kürsî." },
+      { ar:"جَاءَ الْخَادِمُ وَقَالَ: \"أَهْلًا وَسَهْلًا! مَاذَا تُرِيدُ أَنْ تَأْكُلَ؟\"",
+        tr:"Garson geldi ve dedi: \"Hoş geldiniz! Ne yemek istersiniz?\"",
+        pron:"Câe'l-hâdimü ve kâle: \"Ehlen ve sehlen! Mâzâ türîdü en te'küle?\"" },
+      { ar:"قَالَ عُمَرُ: \"أُرِيدُ سَمَكًا وَأَرُزًّا وَسَلَطَةً، وَكُوبَ مَاءٍ بَارِدٍ.\"",
+        tr:"Ömer dedi: \"Balık, pilav ve salata istiyorum, bir bardak soğuk su.\"",
+        pron:"Kâle Ömer: \"Ürîdü semeken ve erüzen ve salateten, ve kûbe mâin bârid.\"" },
+      { ar:"بَعْدَ قَلِيلٍ، جَاءَ الطَّعَامُ سَاخِنًا وَلَذِيذًا.",
+        tr:"Kısa bir süre sonra yemek sıcak ve lezzetli geldi.",
+        pron:"Bade kalîl, câe't-taâmü sâhinen ve lezîzen." },
+      { ar:"أَكَلَ عُمَرُ وَشَرِبَ، ثُمَّ قَالَ: \"هَذَا الطَّعَامُ مُمْتَاز! شُكْرًا جَزِيلًا.\"",
+        tr:"Ömer yedi ve içti, sonra dedi: \"Bu yemek mükemmel! Çok teşekkürler.\"",
+        pron:"Ekele Ömerü ve şeribe, sümme kâle: \"Hâzâ't-taâmü mümtâz! Şükran cezîlen.\"" },
+      { ar:"قَالَ الْخَادِمُ: \"عَفْوًا، هَذَا وَاجِبُنَا. تَفَضَّلْ بِالْحِسَابِ.\"",
+        tr:"Garson dedi: \"Rica ederim, bu bizim görevimiz. Buyurun hesap.\"",
+        pron:"Kâle'l-hâdim: \"Afven, hâzâ vâcibünâ. Tefaddal bi'l-hisâb.\"" },
+      { ar:"دَفَعَ عُمَرُ الْحِسَابَ وَقَالَ: \"إِلَى اللِّقَاءِ! الْمَطْعَمُ نَظِيفٌ وَجَمِيلٌ.\"",
+        tr:"Ömer hesabı ödedi ve dedi: \"Hoşça kalın! Restoran temiz ve güzel.\"",
+        pron:"Defaa Ömerü'l-hisâbe ve kâle: \"İlâ'l-likâ'! El-mat'amü nazîfün ve cemîl.\"" }
+    ]
+  },
+
+  /* ---------- 5. صديقي من تركيا ---------- */
+  {
+    id:'turkish-friend',
+    badge:'صَدِيقِي مِنْ تُرْكِيَا',
+    lines:[
+      { ar:"٥. صَدِيقِي مِنْ تُرْكِيَا", tts:"صديقي من تركيا", isTitle:true,
+        tr:"5. Türkiye'den Arkadaşım",
+        pron:"Sadîkî min Türkiyâ" },
+      { ar:"فِي مَدْرَسَتِي طَالِبٌ جَدِيدٌ مِنْ تُرْكِيَا، اسْمُهُ مُرَاد.",
+        tr:"Okulumda Türkiye'den yeni bir öğrenci var, adı Murat.",
+        pron:"Fî medresetî tâlibün cedîdün min Türkiyâ, ismühü Murâd." },
+      { ar:"مُرَاد يَتَكَلَّمُ الْعَرَبِيَّةَ قَلِيلًا، وَأَنَا أَتَكَلَّمُ التُّرْكِيَّةَ قَلِيلًا.",
+        tr:"Murat biraz Arapça konuşur, ben de biraz Türkçe konuşurum.",
+        pron:"Murâd yetekellemü'l-arabiyyete kalîlen, ve ene etekellemü't-türkiyyete kalîlen." },
+      { ar:"قُلْتُ لَهُ: \"مَرْحَبًا يَا مُرَاد! كَيْفَ حَالُكَ؟\"",
+        tr:"Ona dedim: \"Merhaba Murat! Nasılsın?\"",
+        pron:"Kultü lehü: \"Merhaben yâ Murâd! Keyfe hâlüke?\"" },
+      { ar:"قَالَ: \"أَنَا بِخَيْرٍ، شُكْرًا! تُرْكِيَا بَلَدٌ جَمِيلٌ، وَأَنَا أُحِبُّ الْعَرَبِيَّةَ كَثِيرًا.\"",
+        tr:"Dedi: \"İyiyim, teşekkürler! Türkiye güzel bir ülkedir ve Arapçayı çok seviyorum.\"",
+        pron:"Kâle: \"Ene bi-hayrin, şükran! Türkiyâ beledün cemîl, ve ene ühibbü'l-arabiyyete kesîren.\"" },
+      { ar:"أَعْطَيْتُهُ دَفْتَرًا وَقَلَمًا وَكِتَابًا عَرَبِيًّا صَغِيرًا.",
+        tr:"Ona bir defter, bir kalem ve küçük bir Arapça kitap verdim.",
+        pron:"A'taytühü defteren ve kalemen ve kitâben arabiyyen sagîren." },
+      { ar:"قَالَ مُرَاد: \"شُكْرًا جَزِيلًا! أَنْتَ صَدِيقٌ حَقِيقِيٌّ.\"",
+        tr:"Murat dedi: \"Çok teşekkürler! Sen gerçek bir arkadaşsın.\"",
+        pron:"Kâle Murâd: \"Şükran cezîlen! Ente sadîkün hakîkiyy.\"" },
+      { ar:"كُلَّ يَوْمٍ نَجْلِسُ مَعًا فِي الْفَصْلِ وَنَتَعَلَّمُ الْعَرَبِيَّةَ وَالتُّرْكِيَّةَ.",
+        tr:"Her gün sınıfta birlikte oturur, Arapça ve Türkçe öğreniriz.",
+        pron:"Külle yevmin neclisü meân fi'l-fasl ve neteallemü'l-arabiyyete ve't-türkiyye." },
+      { ar:"الصَّدَاقَةُ كَنْزٌ غَالٍ، وَاللُّغَةُ جِسْرٌ بَيْنَ الشُّعُوبِ.",
+        tr:"Dostluk değerli bir hazinedir, dil de halklar arasında bir köprüdür.",
+        pron:"Es-sadâkatü kenzün gâlin, ve'l-lugatü cisrün beyne'ş-şuûb." }
+    ]
+  }
+];
+
+/* =========================================================
+   4) الحالة العامة
+   ========================================================= */
+const storyContainer = document.getElementById('story-container');
+const tabsBox        = document.getElementById('tabs');
+const badge          = document.getElementById('story-badge');
+const speedSelect    = document.getElementById('speed-select');
+let selectedSpan = null;
+let readingAll   = false;
+let activeStory  = stories[0];
+
+/* =========================================================
+   5) أدوات صوتية
+   ========================================================= */
+function speak(text, el, onEnd){
+  if (!('speechSynthesis' in window)){
+    alert('عذراً، متصفحك لا يدعم خاصية النطق الصوتي.');
+    return;
+  }
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'ar-SA';
+  u.rate = parseFloat(speedSelect.value);
+
+  if (el){
+    el.classList.add('playing');
+    const clear = () => el.classList.remove('playing');
+    u.onend = () => { clear(); if (onEnd) onEnd(); };
+    u.onerror = () => { clear(); if (onEnd) onEnd(); };
+  }
+  window.speechSynthesis.speak(u);
+}
+
+/* =========================================================
+   6) بناء عناصر القصة
+   ========================================================= */
+function renderStory(story){
+  readingAll = false;
+  window.speechSynthesis && window.speechSynthesis.cancel();
+  storyContainer.innerHTML = '';
+  badge.textContent = story.badge;
+
+  story.lines.forEach((line, lineIndex) => {
+
+    const wrap = document.createElement('div');
+    wrap.className = "story-line rounded-2xl p-3 border border-transparent cursor-pointer hover:bg-amber-50/70 hover:border-amber-200";
+
+    const wordsBox = document.createElement('div');
+    wordsBox.className = line.isTitle
+      ? "story-text text-xl sm:text-2xl font-bold text-amber-700 text-center leading-loose"
+      : "story-text text-lg sm:text-xl leading-loose text-gray-800";
+
+    const tokens = line.ar.split(' ');
+
+    tokens.forEach(tok => {
+      const key = normalize(tok);
+
+      if (!key){
+        wordsBox.appendChild(document.createTextNode(tok + ' '));
+        return;
+      }
+
+      const span = document.createElement('span');
+      span.className = 'word';
+      span.textContent = cleanWord(tok);
+      span.dataset.key = key;
+
+      span.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (selectedSpan) selectedSpan.classList.remove('selected');
+        span.classList.add('selected');
+        selectedSpan = span;
+        openWordModal(cleanWord(tok), key);
+      });
+
+      wordsBox.appendChild(span);
+      wordsBox.appendChild(document.createTextNode(' '));
+    });
+
+    wrap.appendChild(wordsBox);
+
+    /* أزرار الجملة */
+    const bar = document.createElement('div');
+    bar.className = "mt-2 flex items-center gap-2 flex-wrap";
+
+    const trBtn = document.createElement('button');
+    trBtn.className = "text-[12px] bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-100 px-3 py-1 rounded-full font-bold transition";
+    trBtn.textContent = "🌐 ترجمة الجملة";
+
+    const spkBtn = document.createElement('button');
+    spkBtn.className = "text-[12px] bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-100 px-3 py-1 rounded-full font-bold transition";
+    spkBtn.textContent = "🔊 اسمع";
+
+    spkBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      speak(line.tts || line.ar, wrap);
+    });
+
+    bar.appendChild(trBtn);
+    bar.appendChild(spkBtn);
+    wrap.appendChild(bar);
+
+    /* صندوق الترجمة */
+    const trBox = document.createElement('div');
+    trBox.className = "hidden mt-3 rounded-xl bg-sky-50/80 border border-sky-100 p-3";
+    trBox.innerHTML = `
+      <div class="text-[11px] font-bold text-sky-600 mb-1">🇹🇷 الترجمة التركية</div>
+      <p class="text-sky-900 font-semibold leading-relaxed" dir="ltr" style="text-align:left">${line.tr}</p>
+      <div class="text-[11px] font-bold text-sky-600 mt-3 mb-1">🔤 النطق بالحروف التركية</div>
+      <p class="text-sky-700 text-sm italic leading-relaxed" dir="ltr" style="text-align:left">${line.pron}</p>
+    `;
+    trBox.addEventListener('click', e => e.stopPropagation());
+    wrap.appendChild(trBox);
+
+    function toggleTr(){
+      trBox.classList.toggle('hidden');
+      trBtn.textContent = trBox.classList.contains('hidden') ? "🌐 ترجمة الجملة" : "🌐 إخفاء الترجمة";
+    }
+
+    trBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleTr(); });
+    wrap.addEventListener('click', toggleTr);
+
+    storyContainer.appendChild(wrap);
+  });
+}
+
+/* =========================================================
+   7) تبويبات القصص
+   ========================================================= */
+stories.forEach((s, i) => {
+  const btn = document.createElement('button');
+  btn.className = "tab-btn text-sm font-bold px-4 py-2 rounded-xl bg-white border border-amber-100 text-amber-700 hover:bg-amber-50 transition" + (i === 0 ? " active" : "");
+  btn.textContent = s.badge;
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeStory = s;
+    renderStory(s);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+  tabsBox.appendChild(btn);
+});
+
+/* =========================================================
+   8) نافذة معنى الكلمة
+   ========================================================= */
+const modal      = document.getElementById('modal');
+const modalWord  = document.getElementById('modal-word');
+const modalTr    = document.getElementById('modal-tr');
+const modalPron  = document.getElementById('modal-pron');
+let modalCurrentWord = '';
+
+function openWordModal(displayWord, key){
+  const entry = dict[key];
+  modalWord.textContent = displayWord;
+  modalCurrentWord = displayWord;
+
+  if (entry){
+    modalTr.textContent   = entry.tr;
+    modalPron.textContent = entry.pron;
+    modalPron.classList.remove('text-gray-300');
+  } else {
+    modalTr.textContent   = "—";
+    modalPron.textContent = "لا يوجد نطق محفوظ";
+    modalPron.classList.add('text-gray-300');
+  }
+
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+}
+
+function closeModal(){
+  modal.classList.add('hidden');
+  modal.classList.remove('flex');
+  if (selectedSpan){ selectedSpan.classList.remove('selected'); selectedSpan = null; }
+}
+
+document.getElementById('modal-close').addEventListener('click', closeModal);
+modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+document.getElementById('modal-speak').addEventListener('click', () => {
+  if (modalCurrentWord) speak(modalCurrentWord, null);
+});
+
+/* =========================================================
+   9) قراءة كامل القصة / إيقاف
+   ========================================================= */
+document.getElementById('read-all-btn').addEventListener('click', () => {
+  if (!('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  readingAll = true;
+
+  const els = document.querySelectorAll('#story-container .story-line');
+  let i = 0;
+
+  const next = () => {
+    if (!readingAll || i >= activeStory.lines.length){
+      readingAll = false;
+      els.forEach(el => el.classList.remove('playing'));
+      return;
+    }
+    const el = els[i];
+    el.classList.add('playing');
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    const u = new SpeechSynthesisUtterance(activeStory.lines[i].tts || activeStory.lines[i].ar);
+    u.lang = 'ar-SA';
+    u.rate = parseFloat(speedSelect.value);
+
+    u.onend = () => { el.classList.remove('playing'); i++; next(); };
+    u.onerror = () => { el.classList.remove('playing'); readingAll = false; };
+
+    window.speechSynthesis.speak(u);
+  };
+
+  next();
+});
+
+document.getElementById('stop-btn').addEventListener('click', () => {
+  readingAll = false;
+  if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+  document.querySelectorAll('#story-container .story-line').forEach(el => el.classList.remove('playing'));
+});
+
+/* =========================================================
+   10) التشغيل
+   ========================================================= */
+renderStory(stories[0]);
+</script>
+
+</body>
+</html>
